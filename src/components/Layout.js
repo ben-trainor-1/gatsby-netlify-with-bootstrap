@@ -1,58 +1,50 @@
-import * as React from "react";
-import { Helmet } from "react-helmet";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
-import "./all.sass";
-import useSiteMetadata from "./SiteMetadata";
-import { withPrefix } from "gatsby";
+/**
+ * Layout component that queries for data
+ * with Gatsby's useStaticQuery component
+ *
+ * See: https://www.gatsbyjs.com/docs/use-static-query/
+ */
 
-const TemplateWrapper = ({ children }) => {
-  const { title, description } = useSiteMetadata();
-  return (
-    <div>
-      <Helmet>
-        <html lang="en" />
-        <title>{title}</title>
-        <meta name="description" content={description} />
+import * as React from "react"
+import PropTypes from "prop-types"
+import { useStaticQuery, graphql } from "gatsby"
 
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href={`${withPrefix("/")}img/apple-touch-icon.png`}
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          href={`${withPrefix("/")}img/favicon-32x32.png`}
-          sizes="32x32"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          href={`${withPrefix("/")}img/favicon-16x16.png`}
-          sizes="16x16"
-        />
+import Header from "./header"
+// import "./layout.css" REMOVED GATSBY DEFAULT
 
-        <link
-          rel="mask-icon"
-          href={`${withPrefix("/")}img/safari-pinned-tab.svg`}
-          color="#ff4400"
-        />
-        <meta name="theme-color" content="#fff" />
+// USE BOOTSTRAP
+import 'bootstrap/dist/css/bootstrap.min.css';
+// custom css area
+import '../css/custom.css';
 
-        <meta property="og:type" content="business.business" />
-        <meta property="og:title" content={title} />
-        <meta property="og:url" content="/" />
-        <meta
-          property="og:image"
-          content={`${withPrefix("/")}img/og-image.jpg`}
-        />
-      </Helmet>
-      <Navbar />
-      <div>{children}</div>
-      <Footer />
-    </div>
-  );
-};
+const Layout = ({ children }) => {
+    const data = useStaticQuery(graphql`
+    query SiteTitleQuery {
+      site {
+        siteMetadata {
+          title
+        }
+      }
+    }
+  `)
 
-export default TemplateWrapper;
+    return (
+        <>
+            <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
+            <div>
+                <main>{children}</main>
+                <footer>
+                    © {new Date().getFullYear()} &middot; Built with
+                    {` `}
+                    <a href="https://www.gatsbyjs.com">Gatsby</a>
+                </footer>
+            </div>
+        </>
+    )
+}
+
+Layout.propTypes = {
+    children: PropTypes.node.isRequired,
+}
+
+export default Layout
